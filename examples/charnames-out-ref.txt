@@ -1,0 +1,32 @@
+
+ICU4C compile-time version: 78.3
+ICU4C runtime version: 78.3
+
+
+Codepoint -> Name:
+-------------------
+U+0041     : LATIN CAPITAL LETTER A
+U+0061     : LATIN SMALL LETTER A
+U+00E9     : LATIN SMALL LETTER E WITH ACUTE
+U+03A9     : GREEK CAPITAL LETTER OMEGA
+U+2603     : SNOWMAN
+U+1F600    : GRINNING FACE
+U+10FFFD   : (no name)
+
+
+Name -> Codepoint:
+-------------------
+"SNOWMAN"                           -> U+2603 (9731)
+"GRINNING FACE"                     -> U+1F600 (128512)
+"LATIN SMALL LETTER E WITH ACUTE"   -> U+00E9 (233)
+"NO SUCH CHARACTER NAME"            -> not found
+
+
+Using U_UNICODE_CHAR_NAME selector:  U+0001 : 
+Using U_EXTENDED_CHAR_NAME selector: U+0001 : <control-0001>
+Using U_CHAR_NAME_ALIAS selector:    U+0001 : 
+
+Using U_UNICODE_CHAR_NAME selector:  U+0022 : QUOTATION MARK
+Using U_EXTENDED_CHAR_NAME selector: U+0022 : QUOTATION MARK
+Using U_CHAR_NAME_ALIAS selector:    U+0022 : 
+

@@ -1,0 +1,28 @@
+ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
+
+===============================================================================
+2026 June 12
+
+Initial version.
+
+For the moment, it's a minimal wrapping:
+
+- ICU4C Version
+- Get character name from a codepoint.
+- Get a codepoint from a character name.
+
+Examples:
+
+.ICU4ooRexx~U_ICU_VERSION=          -- ICU4C compile-time version
+.ICU4ooRexx~u_getVersion=           -- ICU4C runtime version
+
+-- Returns "" if no name
+.ICU4ooRexx~u_charName("1F600"~x2d)=                           -- 'GRINNING FACE'
+.ICU4ooRexx~u_charName(65)=                                    -- 'LATIN CAPITAL LETTER A'
+.ICU4ooRexx~u_charName(0)=                                     -- ''
+.ICU4ooRexx~u_charName(0, .ICU4ooRexx~U_EXTENDED_CHAR_NAME)=   -- '<control-0000>'
+
+-- Returns -1 (U+FFFFFF) if name not found
+.RexxUnicode~D2U(.ICU4ooRexx~u_charFromName("GRINNING FACE"))=                                      -- 'U+1F600'
+.RexxUnicode~D2U(.ICU4ooRexx~u_charFromName("<control-0000>"))=                                     -- 'U+FFFFFF'
+.RexxUnicode~D2U(.ICU4ooRexx~u_charFromName("<control-0000>", .ICU4ooRexx~U_EXTENDED_CHAR_NAME))=   -- 'U+0000'
