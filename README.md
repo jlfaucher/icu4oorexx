@@ -138,7 +138,7 @@ export PKG_CONFIG_PATH="$ICU_ROOT/lib/pkgconfig:$PKG_CONFIG_PATH"
 
 [CLDR]: https://cldr.unicode.org
 [diary]: https://github.com/jlfaucher/icu4oorexx/blob/main/_diary.txt "Diary"
-[build_icu4oorexx]: https://github.com/jlfaucher/builder/blob/master/build-icu4oorexx.txt
+[build_icu4oorexx]: https://github.com/jlfaucher/builder/blob/master/build-ICU4ooRexx.txt
 [ICU]: https://icu.unicode.org
 [ICU_releases]: https://github.com/unicode-org/icu/releases
 [ICU4C_API]: https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/
