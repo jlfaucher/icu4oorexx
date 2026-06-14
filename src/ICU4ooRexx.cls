@@ -23,6 +23,7 @@ end
 
 ::method "U_ICU_VERSION" class unguarded external 'library ICU4ooRexx ICU4ooRexx_U_ICU_VERSION' -- ICU4C compile-time version
 ::method "u_getVersion" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_getVersion' -- ICU4C runtime version
+::method "u_getUnicodeVersion" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_getUnicodeVersion' -- Supported Unicode version
 
 -- UCharNameChoice constants (from unicode/uchar.h)
 ::constant U_UNICODE_CHAR_NAME  0   -- Official Unicode Name property (default)

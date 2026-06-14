@@ -232,7 +232,7 @@ RexxRoutine0(RexxStringObject,
  * ICU4ooRexx_u_getVersion()
  *
  * Returns a string identifying the ICU4C version this binding is dynamically
- * liked against, e.g. "73.2"
+ * linked against, e.g. "73.2"
  *
  * Note: this reports the runtime version (returned by u_getVersion()).
  */
@@ -241,6 +241,22 @@ RexxMethod0( RexxStringObject,
 {
     UVersionInfo versionArray;
     u_getVersion(versionArray);
+    char buf[U_MAX_VERSION_STRING_LENGTH];
+    u_versionToString(versionArray, buf);
+    return context->String(buf);
+}
+
+
+/**
+ * ICU4ooRexx_u_getUnicodeVersion()
+ *
+ * Returns a string identifying the Unicode version supported by ICU4C.
+ */
+RexxMethod0( RexxStringObject,
+             ICU4ooRexx_u_getUnicodeVersion)
+{
+    UVersionInfo versionArray;
+    u_getUnicodeVersion(versionArray);
     char buf[U_MAX_VERSION_STRING_LENGTH];
     u_versionToString(versionArray, buf);
     return context->String(buf);
@@ -269,6 +285,7 @@ RexxRoutineEntry ICU4ooRexx_routines[] = {
 RexxMethodEntry ICU4ooRexx_methods[] = {
     REXX_METHOD(ICU4ooRexx_U_ICU_VERSION,         ICU4ooRexx_U_ICU_VERSION),
     REXX_METHOD(ICU4ooRexx_u_getVersion,          ICU4ooRexx_u_getVersion),
+    REXX_METHOD(ICU4ooRexx_u_getUnicodeVersion,   ICU4ooRexx_u_getUnicodeVersion),
 
     REXX_METHOD(ICU4ooRexx_u_charName,            ICU4ooRexx_u_charName),
     REXX_METHOD(ICU4ooRexx_u_charFromName,        ICU4ooRexx_u_charFromName),

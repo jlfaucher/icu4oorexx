@@ -1,6 +1,16 @@
 ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 
 ===============================================================================
+2026 June 14
+
+Add u_getUnicodeVersion, which returns the Unicode version of ICU4C.
+This is the version of the Unicode Character Database (UCD) used to build the ICU4C library.
+It determines which characters and properties are available.
+
+.ICU4ooRexx~u_getUnicodeVersion=        -- 17.0
+
+
+===============================================================================
 2026 June 12
 
 Initial version.
