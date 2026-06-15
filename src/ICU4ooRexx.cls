@@ -25,7 +25,12 @@ end
 ::method "u_getVersion" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_getVersion' -- ICU4C runtime version
 ::method "u_getUnicodeVersion" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_getUnicodeVersion' -- Supported Unicode version
 
--- UCharNameChoice constants (from unicode/uchar.h)
+
+::constant UCHAR_MAX_VALUE ("10ffff"~x2d)       -- The highest Unicode code point value (from uchar.h)
+::constant maxCodepoint (self~UCHAR_MAX_VALUE)  -- For convenience, the name "maxCodepoint" is used by the RexxUnicode class
+
+
+-- UCharNameChoice constants (from uchar.h)
 ::constant U_UNICODE_CHAR_NAME  0   -- Official Unicode Name property (default)
 ::constant U_EXTENDED_CHAR_NAME 2   -- Standard or synthetic character name.
 ::constant U_CHAR_NAME_ALIAS    3   -- Corrected name from NameAliases.txt
@@ -33,6 +38,9 @@ end
 ::method "u_charName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_charName'
 
 ::method "u_charFromName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_charFromName'
+::method "h_charFromLooseName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_charFromLooseName'
+
+::method "h_UAX44_LM2" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_UAX44_LM2'
 
 
 --------------------------------------------------------------------------------

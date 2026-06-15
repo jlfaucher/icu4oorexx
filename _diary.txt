@@ -1,6 +1,37 @@
 ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 
 ===============================================================================
+2026 June 15
+
+UAX44-LM2 normalization for Unicode character name matching.
+https://unicode.org/reports/tr44/#UAX44-LM2
+
+Add h_UAX44_LM2(name).
+    Return a normalized name according to the loose matching rule UAX44-LM2.
+    name must be an ASCII string.
+
+Examples:
+
+    .ICU4ooRexx~h_UAX44_LM2("ZERO WIDTH SPACE")=                -- "zerowidthspace"
+    .ICU4ooRexx~h_UAX44_LM2("Zero_Width-Space")=                -- "zerowidthspace"
+    .ICU4ooRexx~h_UAX44_LM2("   ZeroWidth Space ")=             -- "zerowidthspace"
+    .ICU4ooRexx~h_UAX44_LM2("LINEAR B IDEOGRAM B107M HE-GOAT")= -- 'linearbideogramb107mhegoat'     Remove medial hyphen
+    .ICU4ooRexx~h_UAX44_LM2("HANGUL JUNGSEONG O-E")=            -- 'hanguljungseongo-e'             Exception: the medial hyphen must not be removed
+    .ICU4ooRexx~h_UAX44_LM2("TIBETAN MARK TSA -PHRU")=          -- 'tibetanmarktsa-phru'            Not a medial hyphen, keep it
+
+
+Add h_charFromLooseName(looseName).
+    Get a codepoint whose Unicode name is matched according to the loose matching rule UAX44-LM2.
+
+Examples:
+
+    .ICU4ooRexx~h_charFromLooseName("ZERO WIDTH SPACE")=        -- 8203
+    .ICU4ooRexx~u_charFromName("ZERO WIDTH SPACE")=             -- 8203
+    .ICU4ooRexx~h_charFromLooseName("Zero_Width-Space")=        -- 8203
+    .ICU4ooRexx~h_charFromLooseName("   ZeroWidth Space ")=     -- 8203
+
+
+===============================================================================
 2026 June 14
 
 Add u_getUnicodeVersion, which returns the Unicode version of ICU4C.
