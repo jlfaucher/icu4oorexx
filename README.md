@@ -89,7 +89,7 @@ For example:
 ```Shell
 set ICU_ROOT=E:\ICU4C\icu4c-78.2-WinARM64-MSVC2022
 set PATH=%ICU_ROOT%\binARM64;%PATH%
-set INCLUDE=%ICU_ROOT%\include\unicode;%INCLUDE%
+set INCLUDE=%ICU_ROOT%\include;%INCLUDE%
 set LIB=%ICU_ROOT%\libARM64;%LIB%
 ```
 
@@ -98,10 +98,10 @@ set LIB=%ICU_ROOT%\libARM64;%LIB%
 Declare the ICU_ROOT environment variable, update PATH, INCLUDE and LIB.  
 For example:
 ```Shell
-set ICU_ROOT="E:\ICU4C\icu4c-78.2-Win64-MSVC2022"
-set PATH "%ICU_ROOT%\bin64;%PATH%"
-set INCLUDE="%ICU_ROOT%\include\unicode;%INCLUDE%"
-set LIB="%ICU_ROOT%\lib64;%LIB%"
+set ICU_ROOT=E:\ICU4C\icu4c-78.2-Win64-MSVC2022
+set PATH=%ICU_ROOT%\bin64;%PATH%
+set INCLUDE=%ICU_ROOT%\include;%INCLUDE%
+set LIB=%ICU_ROOT%\lib64;%LIB%
 ```
 
 ### Windows-WSL
