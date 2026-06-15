@@ -28,6 +28,11 @@
 
 #include "oorexxapi.h"
 
+// strcasecmp is called _stricmp by MSVC
+#ifdef WIN32
+  #define strcasecmp _stricmp
+#endif
+
 
 /*******************************************************************************
 *
