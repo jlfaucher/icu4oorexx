@@ -457,6 +457,7 @@ static UBool U_CALLCONV initializeNormalizedNamesCallback(
     char *normalizedName = normalizeName(name, length, buf, sizeof(buf), NULL); // NULL ==> don't raise exception
 
     if (normalizedName != NULL) normalizedNames[normalizedName] = codepoint;
+    // TODO: add all the aliases
     return true; // keep going
 }
 
@@ -470,7 +471,7 @@ static UErrorCode initializeNormalizedNames()
         0, UCHAR_MAX_VALUE, // full Unicode range
         initializeNormalizedNamesCallback,
         NULL,  // context not used
-        U_UNICODE_CHAR_NAME, // official character names
+        U_EXTENDED_CHAR_NAME, // extended character names
         &status
     );
 

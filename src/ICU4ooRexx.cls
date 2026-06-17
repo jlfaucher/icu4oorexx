@@ -37,7 +37,24 @@ end
 
 ::method "u_charName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_charName'
 
+::method "h_extendedCharName" class unguarded
+    use strict arg codepoint
+    return self~u_charName(codepoint, self~U_EXTENDED_CHAR_NAME)
+
+::method "h_charNameAlias" class unguarded
+    use strict arg codepoint
+    return self~u_charName(codepoint, self~U_CHAR_NAME_ALIAS)
+
 ::method "u_charFromName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_charFromName'
+
+::method "h_charFromExtendedName" class unguarded
+    use strict arg name
+    return self~u_charFromName(name, self~U_EXTENDED_CHAR_NAME)
+
+::method "h_charFromNameAlias" class unguarded
+    use strict arg name
+    return self~u_charFromName(name, self~U_CHAR_NAME_ALIAS)
+
 ::method "h_charFromLooseName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_charFromLooseName'
 
 ::method "h_UAX44_LM2" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_UAX44_LM2'

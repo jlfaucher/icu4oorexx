@@ -3,6 +3,16 @@ ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 ===============================================================================
 2026 June 15
 
+Add convenience methods:
+- h_extendedCharName(codepoint)
+- h_charNameAlias(codepoint)
+- h_charFromExtendedName(name)
+- h_charFromNameAlias(name)
+
+
+===============================================================================
+2026 June 15
+
 UAX44-LM2 normalization for Unicode character name matching.
 https://unicode.org/reports/tr44/#UAX44-LM2
 
