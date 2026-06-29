@@ -41,6 +41,7 @@ end
     use strict arg codepoint
     return self~u_charName(codepoint, self~U_EXTENDED_CHAR_NAME)
 
+-- https://en.wikipedia.org/wiki/Unicode_alias_names_and_abbreviations
 ::method "h_charNameAlias" class unguarded
     use strict arg codepoint
     return self~u_charName(codepoint, self~U_CHAR_NAME_ALIAS)
@@ -58,20 +59,3 @@ end
 ::method "h_charFromLooseName" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_charFromLooseName'
 
 ::method "h_UAX44_LM2" class unguarded external 'library ICU4ooRexx ICU4ooRexx_h_UAX44_LM2'
-
-
---------------------------------------------------------------------------------
--- Routine interface (names mirror the ICU4C C API)
-
--- The routine names are quoted to avoid this kind of error with ooRexx 4.2:
---     Error 90.999:  Unable to find external routine "ICU4C_U_GETVERSION"
--- Other possible workaround for ooRexx 4.2:
--- declare the routine name after the library name:
---     ::routine ICU4C_u_getVersion public external 'library ICU4ooRexx ICU4C_u_getVersion'
-
-
--- ::routine "ICU4C_U_ICU_VERSION" public external 'library ICU4ooRexx' -- ICU4C compile-time version
--- ::routine "ICU4C_u_getVersion" public external 'library ICU4ooRexx' -- ICU4C runtime version
-
--- ::routine "ICU4C_u_charName" public external 'library ICU4ooRexx'
--- ::routine "ICU4C_u_charFromName" public external 'library ICU4ooRexx'

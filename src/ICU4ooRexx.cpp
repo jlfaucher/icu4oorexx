@@ -73,13 +73,14 @@ static void raiseException(RexxMethodContext* c, const char* fmt, ...)
 *
 *******************************************************************************/
 
-#if 0
-RexxRoutine2(RexxStringObject,
-             ICU4C_u_charName,
-             uint32_t,          codepoint,
-             OPTIONAL_uint8_t,  nameChoice)
-#endif
 
+
+/*******************************************************************************
+*
+* Class interface
+* Method names mirror the ICU4C C API.
+*
+*******************************************************************************/
 
 /**
  * Returns the Unicode name of a codepoint as an ooRexx String.
@@ -148,14 +149,6 @@ RexxMethod2( RexxStringObject,
 }
 
 
-#if 0
-RexxRoutine2(int32_t,
-             ICU4C_u_charFromName,
-             CSTRING,           name,
-             OPTIONAL_uint8_t,  nameChoice)
-#endif
-
-
 /**
  * Returns the codepoint of a Unicode name as an ooRexx integer.
  *
@@ -213,12 +206,6 @@ RexxMethod2( int32_t,
 }
 
 
-#if 0
-RexxRoutine0(RexxStringObject,
-             ICU4C_U_ICU_VERSION)
-#endif
-
-
 /**
  * ICU4ooRexx_U_ICU_VERSION()
  *
@@ -234,12 +221,6 @@ RexxMethod0( RexxStringObject,
     snprintf(buf, sizeof(buf), U_ICU_VERSION);
     return context->String(buf);
 }
-
-
-#if 0
-RexxRoutine0(RexxStringObject,
-             ICU4C_u_getVersion)
-#endif
 
 
 /**
@@ -397,7 +378,7 @@ static char *normalizeName(const char *looseName, size_t looseName_size, char *b
         if (context != NULL) {
             if      (error == 1) raiseException(context, "Internal error: NULL argument");
             else if (error == 2) raiseException(context, "Name length must be lesser than %d", buf_size);
-            else if (error == 3) raiseException(context, "Name must be an ASCII string");
+            else if (error == 3) raiseException(context, "Name must be an ASCII string; found \"%s\"", looseName);
             else                 raiseException(context, "Unknown error %i", error);
         }
         return NULL;
