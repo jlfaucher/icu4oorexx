@@ -115,10 +115,10 @@ say
 say "Extended names algorithmically generated:"
 say "------------------------------------------"
 /*
-An extended name is either the standard name if defined, or a codepoint label algorithmically generated.
+An extended name is either the standard name if defined, or a code point label algorithmically generated.
 Extended names are strictly unique across the entire codespace.
-Codepoint labels are constructed by using a lowercase prefix derived from the code point type,
-followed by a hyphen-minus and then a 4- to 6-digit hexadecimal representation of the codepoint.
+Code point labels are constructed by using a lowercase prefix derived from the code point type,
+followed by a hyphen-minus and then a 4- to 6-digit hexadecimal representation of the code point.
     Control         <control-NNNN>
     Reserved        <reserved-NNNN>
     Noncharacter    <noncharacter-NNNN>
