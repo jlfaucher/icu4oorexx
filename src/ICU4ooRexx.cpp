@@ -17,9 +17,11 @@
 #include <string.h>
 #include <ctype.h>
 
+#include <cstdint>
 #include <string>
 #include <algorithm>
 #include <unordered_map>
+#include <vector>
 
 #include "unicode/uchar.h"      // u_charName, u_charFromName, UChar32, ...
 #include "unicode/uvernum.h"    // U_ICU_VERSION
@@ -32,6 +34,11 @@
 #ifdef WIN32
   #define strcasecmp _stricmp
 #endif
+
+// ICU4C doesnt define the maximum buffer size needed for u_charName.
+#define NAME_MAX_SIZE 256
+// A loose name is not an ICU4C concept
+#define LOOSE_NAME_MAX_SIZE 256
 
 
 /*******************************************************************************
@@ -49,7 +56,7 @@ static void raiseException(RexxCallContext* c, const char* fmt, ...)
     va_start(ap, fmt);
     vsnprintf(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    c->RaiseException1(Rexx_Error_Incorrect_method_user_defined, c->String(buf));
+    c->RaiseException1(Rexx_Error_Incorrect_call_user_defined, c->String(buf));
 }
 
 
@@ -137,12 +144,12 @@ RexxMethod2( RexxStringObject,
         choice = (UCharNameChoice)nameChoice;
     }
 
-    char        buf[256];
-    UErrorCode  err = U_ZERO_ERROR;
+    char        buf[NAME_MAX_SIZE];
+    UErrorCode  status = U_ZERO_ERROR;
     int32_t     len = u_charName((UChar32)codepoint, choice,
-                                 buf, (int32_t)sizeof(buf), &err);
+                                 buf, (int32_t)sizeof(buf), &status);
 
-    if (U_FAILURE(err) || len == 0)
+    if (U_FAILURE(status) || len == 0)
         return context->NullString();   // no name for this codepoint
 
     return context->String(buf);
@@ -196,10 +203,10 @@ RexxMethod2( int32_t,
         choice = (UCharNameChoice)nameChoice;
     }
 
-    UErrorCode err = U_ZERO_ERROR;
-    UChar32 codepoint = u_charFromName(choice, name, &err);
+    UErrorCode status = U_ZERO_ERROR;
+    UChar32 codepoint = u_charFromName(choice, name, &status);
 
-    if (U_FAILURE(err) || codepoint < 0)
+    if (U_FAILURE(status) || codepoint < 0)
         return -1;
 
     return (int32_t)codepoint;
@@ -367,8 +374,7 @@ static char *UAX44_LM2(const char *input, size_t len, char *buf, size_t buf_size
 }
 
 
-#define LOOSE_NAME_MAX_SIZE 256
-static char *normalizeName(const char *looseName, size_t looseName_size, char *buf, size_t buf_size, RexxMethodContext* context)
+static const char *normalizeName(const char *looseName, size_t looseName_size, char *buf, size_t buf_size, RexxMethodContext* context)
 {
     int error = 0;
 
@@ -414,16 +420,51 @@ RexxMethod1( RexxStringObject,
 {
     size_t looseName_size = context->StringLength(looseName);
     const char *looseName_data = context->StringData(looseName);
-    char buf[LOOSE_NAME_MAX_SIZE];
 
-    char *normalizedName = normalizeName(looseName_data, looseName_size, buf, sizeof(buf), context);
+    char buf[LOOSE_NAME_MAX_SIZE];
+    const char *normalizedName = normalizeName(looseName_data, looseName_size, buf, sizeof(buf), context);
 
     if (normalizedName == NULL) return context->NullString();
     return context->String(normalizedName);
 }
 
 
+#define NEW_LOOSENAME_IMPLEMENTATION 1
+
+#if NEW_LOOSENAME_IMPLEMENTATION
+
+struct NormalizedName
+{
+    uint64_t normalizedNameHash;
+    UChar32 codepoint;
+};
+
+static std::vector<NormalizedName> normalizedNames; // sorted by hash
+
+#else
+
 static std::unordered_map<std::string, UChar32> normalizedNames;
+
+#endif
+
+
+#if NEW_LOOSENAME_IMPLEMENTATION
+static uint64_t fnv1aHash(const char *s)
+{
+    uint64_t hash = 0xcbf29ce484222325ULL;
+    constexpr uint64_t prime = 0x100000001b3ULL;
+    if (s != NULL) {
+        while (*s) {
+            unsigned char c = (unsigned char)*s;
+            hash ^= c;
+            hash *= prime;
+            s++;
+        }
+    }
+    return hash;
+}
+#endif
+
 
 // Callback used by u_enumCharNames
 static UBool U_CALLCONV initializeNormalizedNamesCallback(
@@ -434,13 +475,37 @@ static UBool U_CALLCONV initializeNormalizedNamesCallback(
     int32_t length)
 {
     char buf[LOOSE_NAME_MAX_SIZE];
+    const char *normalizedName = normalizeName(name, length, buf, sizeof(buf), NULL); // NULL ==> don't raise exception
 
-    char *normalizedName = normalizeName(name, length, buf, sizeof(buf), NULL); // NULL ==> don't raise exception
+#if NEW_LOOSENAME_IMPLEMENTATION
+    if (normalizedName != NULL) {
+        uint64_t normalizedNameHash = fnv1aHash(normalizedName);
+        normalizedNames.push_back({normalizedNameHash, codepoint});
+    }
 
+    // Add the name alias, if not empty
+    {
+        char buf[NAME_MAX_SIZE];
+        const char *nameAlias = buf;
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t len = u_charName(codepoint, U_CHAR_NAME_ALIAS, buf, sizeof(buf), &status);
+        if (U_SUCCESS(status) && len != 0) {
+            char buf[LOOSE_NAME_MAX_SIZE];
+            const char *normalizedNameAlias = normalizeName(nameAlias, strlen(nameAlias), buf, sizeof(buf), NULL);
+            if (normalizedNameAlias != NULL) {
+                // printf("[ICU4ooRexx] push_back codepoint %i '%s'\n", codepoint, normalizedNameAlias);
+                uint64_t normalizedNameAliasHash = fnv1aHash(normalizedNameAlias);
+                normalizedNames.push_back({normalizedNameAliasHash, codepoint});
+            }
+        }
+    }
+#else
     if (normalizedName != NULL) normalizedNames[normalizedName] = codepoint;
     // TODO: add all the aliases
+#endif
     return true; // keep going
 }
+
 
 static UErrorCode initializeNormalizedNames()
 {
@@ -449,15 +514,91 @@ static UErrorCode initializeNormalizedNames()
     if (normalizedNames.empty() == false) return U_ZERO_ERROR; // Already initialized
 
     u_enumCharNames(
-        0, UCHAR_MAX_VALUE, // full Unicode range
+        0, UCHAR_MAX_VALUE + 1, // full Unicode range
         initializeNormalizedNamesCallback,
         NULL,  // context not used
         U_EXTENDED_CHAR_NAME, // extended character names
         &status
     );
 
+#if NEW_LOOSENAME_IMPLEMENTATION
+    std::sort(normalizedNames.begin(), normalizedNames.end(),
+        [](const NormalizedName &nn1, const NormalizedName &nn2) { return nn1.normalizedNameHash < nn2.normalizedNameHash; });
+#endif
+
     return status;
 }
+
+
+#if NEW_LOOSENAME_IMPLEMENTATION
+// The initialization is made when this library is loaded
+static struct NormalizedNamesInitializer
+{
+    NormalizedNamesInitializer()
+    {
+        UErrorCode status = initializeNormalizedNames();
+        if (status != 0) {
+            // can't raiseException because context not available
+            fprintf(stderr, "[ICU4ooRexx] Could not initialize the mapping from normalized names to codepoints");
+        }
+    };
+} normalizedNamesInitializer;
+#endif
+
+
+#if NEW_LOOSENAME_IMPLEMENTATION
+static UChar32 lookup(const char *looseName, size_t looseName_size)
+{
+    char bufLooseName[LOOSE_NAME_MAX_SIZE];
+    const char *normalizedLooseName = normalizeName(looseName, looseName_size, bufLooseName, sizeof(bufLooseName), NULL);
+
+    uint64_t hash = fnv1aHash(normalizedLooseName);
+    // binary search
+    auto it = std::lower_bound(normalizedNames.begin(), normalizedNames.end(), hash,
+        [](const NormalizedName &nn, uint64_t hash){ return nn.normalizedNameHash < hash; });
+
+    // Handles collisions.
+    // On a hash hit, call u_charName() with U_EXTENDED_CHAR_NAME on the candidate codepoint,
+    // re-normalize it, and confirm it matches normalizedLooseName.
+    // If no match with U_EXTENDED_CHAR_NAME, test with U_CHAR_NAME_ALIAS.
+    // For info, I checked ALL the names of Unicode 17 with a script, there is ZERO collision.
+    int count = 0;
+    while (it != normalizedNames.end() && it->normalizedNameHash == hash)
+    {
+        char bufName[NAME_MAX_SIZE];
+        char bufLooseName[LOOSE_NAME_MAX_SIZE];
+
+        // Compare with U_EXTENDED_CHAR_NAME
+        const char *extendedName = bufName;
+        UErrorCode status = U_ZERO_ERROR;
+        int32_t len = u_charName(it->codepoint, U_EXTENDED_CHAR_NAME, bufName, sizeof(bufName), &status);
+        if (U_SUCCESS(status) && len != 0) {
+            const char *normalizedExtendedName = normalizeName(extendedName, strlen(extendedName), bufLooseName, sizeof(bufLooseName), NULL);
+            if (strcmp(normalizedLooseName, normalizedExtendedName) == 0) {
+                // if (count > 0) printf("[ICU4ooRexx] looseName '%s' found after %i collisions\n", looseName, count);
+                return it->codepoint;
+            }
+        }
+
+        // Compare with U_CHAR_NAME_ALIAS
+        const char *nameAlias = bufName;
+        status = U_ZERO_ERROR;
+        len = u_charName(it->codepoint, U_CHAR_NAME_ALIAS, bufName, sizeof(bufName), &status);
+        if (U_SUCCESS(status) && len != 0) {
+            const char *normalizedNameAlias = normalizeName(nameAlias, strlen(nameAlias), bufLooseName, sizeof(bufLooseName), NULL);
+            if (strcmp(normalizedLooseName, normalizedNameAlias) == 0) {
+                // if (count > 0) printf("[ICU4ooRexx] looseName '%s' found after %i collisions\n", looseName, count);
+                return it->codepoint;
+            }
+        }
+
+        ++it;
+        count++;
+    }
+    // if (count > 0) printf("[ICU4ooRexx] looseName '%s' NOT found after %i collisions\n", looseName, count);
+    return -1;
+}
+#endif
 
 
 /**
@@ -483,19 +624,27 @@ RexxMethod1( int32_t,
              ICU4ooRexx_h_charFromLooseName,
              RexxStringObject,  looseName)
 {
+#if NEW_LOOSENAME_IMPLEMENTATION
+    size_t looseName_size = context->StringLength(looseName);
+    const char *looseName_data = context->StringData(looseName);
+
+    UChar32 codepoint = lookup(looseName_data, looseName_size);
+
+    return (int32_t)codepoint;
+#else
     // The initialization is made at the first call
     // The next calls receive the same value as the first call
-    UErrorCode err = initializeNormalizedNames();
-    if (err != 0) {
+    UErrorCode status = initializeNormalizedNames();
+    if (status != 0) {
         raiseException(context, "Could not initialize the mapping from normalized names to codepoints");
         return -1; // The initialization failed
     }
 
     size_t looseName_size = context->StringLength(looseName);
     const char *looseName_data = context->StringData(looseName);
-    char buf[LOOSE_NAME_MAX_SIZE];
 
-    char *normalizedName = normalizeName(looseName_data, looseName_size, buf, sizeof(buf), context);
+    char buf[LOOSE_NAME_MAX_SIZE];
+    const char *normalizedName = normalizeName(looseName_data, looseName_size, buf, sizeof(buf), context);
 
     UChar32 codepoint = -1;
     if (normalizedName != NULL) {
@@ -504,6 +653,7 @@ RexxMethod1( int32_t,
     }
 
     return (int32_t)codepoint;
+#endif
 }
 
 

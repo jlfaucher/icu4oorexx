@@ -156,5 +156,46 @@ do cp = 0 to .ICU4ooRexx~maxCodepoint
 end
 
 
+say
+say "Search using loose names:"
+say "--------------------------"
+do cp = 0 to .ICU4ooRexx~maxCodepoint
+    charName = .ICU4ooRexx~u_charName(cp)
+    looseCharName = " "charName" "
+
+    extendedCharName = .ICU4ooRexx~h_extendedCharName(cp)
+    looseExtendedCharName = " "extendedCharName" "
+
+    charNameAlias = .ICU4ooRexx~h_charNameAlias(cp)
+    looseCharNameAlias = " "charNameAlias" "
+
+    -- A character name can be empty
+    if charName \== "" then do
+        cpFound = .ICU4ooRexx~h_charFromLooseName(charName)
+        if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "charName" '"'charName'". Got' cpFound
+
+        cpFound = .ICU4ooRexx~h_charFromLooseName(looseCharName)
+        if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "looseCharName" '"'looseCharName'". Got' cpFound
+    end
+
+    -- A character extended name is never empty.
+    cpFound = .ICU4ooRexx~h_charFromLooseName(extendedCharName)
+    if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "extendedCharName" '"'extendedCharName'". Got' cpFound
+
+    cpFound = .ICU4ooRexx~h_charFromLooseName(looseExtendedCharName)
+    if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "looseExtendedCharName" '"'looseExtendedCharName'". Got' cpFound
+
+    -- A character name alias can be empty
+    if charNameAlias \== "" then do
+        cpFound = .ICU4ooRexx~h_charFromLooseName(charNameAlias)
+        if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "charNameAlias" '"'charNameAlias'". Got' cpFound
+
+        cpFound = .ICU4ooRexx~h_charFromLooseName(looseCharNameAlias)
+        if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "looseCharNameAlias" '"'looseCharNameAlias'". Got' cpFound
+    end
+end
+say "done (ok if nothing displayed)."
+
+
 ::requires "ICU4ooRexx.cls"
 ::requires "rxunicode.cls" -- for D2U

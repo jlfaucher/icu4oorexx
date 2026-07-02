@@ -1,6 +1,25 @@
 ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 
 ===============================================================================
+2026 July 02
+
+Improve the implementation of `h_charFromLooseName`:
+- The internal mapping table is no longer initialized on the first call.
+- It is now initialized when the library is loaded.
+- The table is no longer a mapping from normalized names to codepoints;
+  Instead, it maps 64-bit hashes to codepoints, greatly reducing its size.
+- Loose-name aliases are now supported.
+
+This is a dual implementation controlled by `#if NEW_LOOSENAME_IMPLEMENTATION`.
+It will be removed after a period of testing.
+
+Examples:
+
+    -- Loose-name alias
+    .ICU4ooRexx~h_charFromLooseName(" MICR ON US SYMBOL")=  -- 9288
+
+
+===============================================================================
 2026 June 15
 
 Add convenience methods:
