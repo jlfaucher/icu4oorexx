@@ -138,3 +138,39 @@ U+1E89A "MENDE KIKAKUI SYLLABLE M174 MBO" -> "MENDE KIKAKUI SYLLABLE M174 MBOO"
 Search using loose names:
 --------------------------
 done (ok if nothing displayed).
+
+Error messages:
+----------------
+1:
+Argument 1 must be in the range 0 to 4294967295; found "-1".
+Error code= 88.907
+2:
+Argument 2 must be in the range 0 to 255; found "1000".
+Error code= 88.907
+3:
+[ICU4ooRexx] Codepoint 0x110000 is out of Unicode range (must be 0x0000..0x10FFFF).
+Error code= 93.900
+4:
+[ICU4ooRexx] NameChoice must be 0 (U_UNICODE_CHAR_NAME) or 2 (U_EXTENDED_CHAR_NAME) or 3 (U_CHAR_NAME_ALIAS); found 100.
+Error code= 93.900
+5:
+Argument 1 must have a string value.
+Error code= 88.909
+6:
+Argument 2 must be in the range 0 to 255; found "1000".
+Error code= 88.907
+7:
+[ICU4ooRexx] NameChoice must be 0 (U_UNICODE_CHAR_NAME) or 2 (U_EXTENDED_CHAR_NAME) or 3 (U_CHAR_NAME_ALIAS); found 100.
+Error code= 93.900
+8:
+Argument 1 must have a string value.
+Error code= 88.909
+9:
+[ICU4ooRexx] Name length must be lesser than 256.
+Error code= 93.900
+10:
+[ICU4ooRexx] Name must be an ASCII string; found "père".
+Error code= 93.900
+11:
+[ICU4ooRexx] Name must be an ASCII string; found "pèrexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".
+Error code= 93.900

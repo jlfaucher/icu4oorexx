@@ -123,6 +123,7 @@ RexxMethod2( RexxStringObject,
     // Validate codepoint range: Unicode is U+0000 .. U+10FFFF
     if (codepoint > 0x10FFFF) {
         raiseException(context,
+            "[ICU4ooRexx] "
             "Codepoint 0x%X is out of Unicode range "
             "(must be 0x0000..0x10FFFF)", codepoint);
         return context->NullString();
@@ -134,6 +135,7 @@ RexxMethod2( RexxStringObject,
             nameChoice != U_EXTENDED_CHAR_NAME &&
             nameChoice != U_CHAR_NAME_ALIAS) {
             raiseException(context,
+                "[ICU4ooRexx] "
                 "NameChoice must be %d (U_UNICODE_CHAR_NAME) "
                 "or %d (U_EXTENDED_CHAR_NAME) "
                 "or %d (U_CHAR_NAME_ALIAS); found %d",
@@ -193,6 +195,7 @@ RexxMethod2( int32_t,
             nameChoice != U_EXTENDED_CHAR_NAME &&
             nameChoice != U_CHAR_NAME_ALIAS) {
             raiseException(context,
+                "[ICU4ooRexx] "
                 "NameChoice must be %d (U_UNICODE_CHAR_NAME) "
                 "or %d (U_EXTENDED_CHAR_NAME) "
                 "or %d (U_CHAR_NAME_ALIAS); found %d",
@@ -382,10 +385,10 @@ static const char *normalizeName(const char *looseName, size_t looseName_size, c
 
     if (error != 0) {
         if (context != NULL) {
-            if      (error == 1) raiseException(context, "Internal error: NULL argument");
-            else if (error == 2) raiseException(context, "Name length must be lesser than %d", buf_size);
-            else if (error == 3) raiseException(context, "Name must be an ASCII string; found \"%s\"", looseName);
-            else                 raiseException(context, "Unknown error %i", error);
+            if      (error == 1) raiseException(context, "[ICU4ooRexx] Internal error: NULL argument");
+            else if (error == 2) raiseException(context, "[ICU4ooRexx] Name length must be lesser than %d", buf_size);
+            else if (error == 3) raiseException(context, "[ICU4ooRexx] Name must be an ASCII string; found \"%s\"", looseName);
+            else                 raiseException(context, "[ICU4ooRexx] Unknown error %i", error);
         }
         return NULL;
     }
@@ -636,7 +639,7 @@ RexxMethod1( int32_t,
     // The next calls receive the same value as the first call
     UErrorCode status = initializeNormalizedNames();
     if (status != 0) {
-        raiseException(context, "Could not initialize the mapping from normalized names to codepoints");
+        raiseException(context, "[ICU4ooRexx] Could not initialize the mapping from normalized names to codepoints");
         return -1; // The initialization failed
     }
 

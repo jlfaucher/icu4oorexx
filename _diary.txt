@@ -1,9 +1,14 @@
 ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 
+
 ===============================================================================
 2026 July 02
 
-[Unicode]
+Prefix error messages with [ICU4ooRexx].
+
+
+===============================================================================
+2026 July 02
 
 Regression tests.
 The results may vary depending on the version of the ICU4C library.

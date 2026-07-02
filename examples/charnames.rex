@@ -159,6 +159,7 @@ end
 say
 say "Search using loose names:"
 say "--------------------------"
+--signal end_loose_names -- takes time
 do cp = 0 to .ICU4ooRexx~maxCodepoint
     charName = .ICU4ooRexx~u_charName(cp)
     looseCharName = " "charName" "
@@ -194,7 +195,51 @@ do cp = 0 to .ICU4ooRexx~maxCodepoint
         if cp \== cpFound then say "*** h_charFromLooseName failed for" cp "looseCharNameAlias" '"'looseCharNameAlias'". Got' cpFound
     end
 end
+end_loose_names:
 say "done (ok if nothing displayed)."
+
+
+say
+say "Error messages:"
+say "----------------"
+    testCase = 1
+    signal on syntax
+    1: say "1:"; say .ICU4ooRexx~u_charName(-1, 1000)                                   -- Argument 1 must be in the range 0 to 4294967295; found "-1".
+    2: say "2:"; say .ICU4ooRexx~u_charName(.ICU4ooRexx~UCHAR_MAX_VALUE + 1, 1000)      -- Argument 2 must be in the range 0 to 255; found "1000".
+    3: say "3:"; say .ICU4ooRexx~u_charName(.ICU4ooRexx~UCHAR_MAX_VALUE + 1, 100)       -- [ICU4ooRexx] Codepoint 0x110000 is out of Unicode range (must be 0x0000..0x10FFFF).
+    4: say "4:"; say .ICU4ooRexx~u_charName(0, 100)                                     -- [ICU4ooRexx] NameChoice must be 0 (U_UNICODE_CHAR_NAME) or 2 (U_EXTENDED_CHAR_NAME) or 3 (U_CHAR_NAME_ALIAS); found 100.
+
+    5: say "5:"; say .ICU4ooRexx~u_charFromName(.object, 1000)                          -- Argument 1 must have a string value.
+    6: say "6:"; say .ICU4ooRexx~u_charFromName("<control-0000>", 1000)                 -- Argument 2 must be in the range 0 to 255; found "1000".
+    7: say "7:"; say .ICU4ooRexx~u_charFromName("<control-0000>", 100)                  -- [ICU4ooRexx] NameChoice must be 0 (U_UNICODE_CHAR_NAME) or 2 (U_EXTENDED_CHAR_NAME) or 3 (U_CHAR_NAME_ALIAS); found 100.
+
+    8: say "8:"; say .ICU4ooRexx~h_UAX44_LM2(.object)                                   -- Argument 1 must have a string value.
+    9: say "9:"; say .ICU4ooRexx~h_UAX44_LM2("x"~copies(1000))                          -- [ICU4ooRexx] Name length must be lesser than 256.
+    10: say "10:"; say .ICU4ooRexx~h_UAX44_LM2("père")                                  -- [ICU4ooRexx] Name must be an ASCII string; found "père".
+    11: say "11:"; say .ICU4ooRexx~h_UAX44_LM2("père" || "x"~copies(250))               -- [ICU4ooRexx] Name must be an ASCII string; found "pèrexxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx".
+
+    12:
+
+exit
+
+syntax:
+    call sayCondition condition("O")
+    testCase += 1
+    signal on syntax
+    signal value testCase
+
+
+::routine sayCondition
+    use strict arg condition
+    if condition == .nil then return
+
+    if condition~condition <> "SYNTAX" then .error~say(condition~condition)
+    if condition~description <> .nil, condition~description <> "" then .error~say(condition~description)
+
+    -- For SYNTAX conditions
+    if condition~message <> .nil then .error~say(condition~message)
+    else if condition~errortext <> .nil then .error~say(condition~errortext)
+    if condition~code <> .nil then .error~say("Error code=" condition~code)
 
 
 ::requires "ICU4ooRexx.cls"
