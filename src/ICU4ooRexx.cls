@@ -26,8 +26,8 @@ end
 ::method "u_getUnicodeVersion" class unguarded external 'library ICU4ooRexx ICU4ooRexx_u_getUnicodeVersion' -- Supported Unicode version
 
 
-::constant UCHAR_MAX_VALUE ("10ffff"~x2d)       -- The highest Unicode code point value (from uchar.h)
-::constant maxCodepoint (self~UCHAR_MAX_VALUE)  -- For convenience, the name "maxCodepoint" is used by the RexxUnicode class
+::constant UCHAR_MAX_VALUE 1114111      -- ("10ffff"~x2d), The highest Unicode code point value (from uchar.h)
+::constant maxCodepoint 1114111         -- (self~UCHAR_MAX_VALUE), For convenience, the name "maxCodepoint" is used by the RexxUnicode class
 
 
 -- UCharNameChoice constants (from uchar.h)
