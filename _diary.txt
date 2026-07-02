@@ -3,6 +3,36 @@ ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ API.
 ===============================================================================
 2026 July 02
 
+[Unicode]
+
+Regression tests.
+The results may vary depending on the version of the ICU4C library.
+That's why the ICU4C version numbers are included in the output.
+
+macOS and Linux:
+cdicu4oorexx (or manually cd to the icu4oorexx repository if you're not using `builder`)
+cd examples
+make (display help)
+    make all
+    ---------- scriptsFiles
+    make charnames
+    ----------
+    make clean
+
+Windows:
+cdicu4oorexx (or manually cd to the icu4oorexx repository if you're not using `builder`)
+cd examples
+nmake (display help)
+    nmake all
+    ---------- scriptsFiles
+    nmake charnames
+    ----------
+    nmake clean
+
+
+===============================================================================
+2026 July 02
+
 Improve the implementation of `h_charFromLooseName`:
 - The internal mapping table is no longer initialized on the first call.
 - It is now initialized when the library is loaded.
