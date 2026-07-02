@@ -1,5 +1,9 @@
 # ICU4ooRexx
 
+<div align="center">
+<img src="images/ICU4C_robot.png" alt="ICU4C robot" width="60%">
+</div>
+
 ICU4ooRexx is an ooRexx library that wraps the ICU4C C/C++ libraries.
 
 ICU stands for "International Components for Unicode".  
