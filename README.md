@@ -81,9 +81,9 @@ ICU4C provides extended Unicode functionality when needed:
   ```
 
 
-## ICU installation
+## ICU4C installation
 
-ICU releases:  [https://github.com/unicode-org/icu/releases][ICU_releases]
+ICU4C releases:  [https://github.com/unicode-org/icu/releases][ICU_releases]
 
 
 ### Windows-ARM64
