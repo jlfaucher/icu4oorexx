@@ -1,0 +1,6 @@
+If rxunicode.cls is not loaded before ICU4ooRexx.cls, the automatic registration is not done.
+.RexxUnicode~ICU4ooRexxIsRegistered = 0
+.RexxUnicode~character('€')~name = 
+Registering ICU4ooRexx
+.RexxUnicode~ICU4ooRexxIsRegistered = 1
+.RexxUnicode~character('€')~name = EURO SIGN

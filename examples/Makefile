@@ -7,7 +7,8 @@
 # Under Windows, nmake will ignore GNUmakefile and use Makefile.
 
 # ooRexx scripts in the current directory
-scriptsFiles = charnames
+scriptsFiles = charnames \
+               registration
 
 NMAKE = nmake /c /f Makefile
 
